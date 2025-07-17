@@ -137,3 +137,12 @@ dmypy.json
 output/
 generated_images/
 word_clouds/
+
+# Debug files
+*debug*
+*_debug.*
+debug_*
+sample_text_debug.txt
+*.debug
+debug.txt
+test_debug.*

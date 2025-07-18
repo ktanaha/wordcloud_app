@@ -6,6 +6,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 import threading
 import os
 import sys
+import tempfile
 from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
 from wordcloud_generator import JapaneseWordCloudGenerator
@@ -19,7 +20,8 @@ class WordCloudGUI:
         
         # 変数の初期化
         self.input_file_path = tk.StringVar()
-        self.output_file_path = tk.StringVar(value="wordcloud_output.png")
+        # 出力ファイルパスを設定（書き込み権限を考慮）
+        self.output_file_path = tk.StringVar(value=self.get_writable_output_path())
         self.dict_file_path = tk.StringVar()
         
         # パラメータ変数
@@ -35,6 +37,17 @@ class WordCloudGUI:
         
         # GUI構築
         self.create_widgets()
+        
+        # 実行ディレクトリをログに出力
+        current_dir = os.getcwd()
+        self.log_message(f"実行ディレクトリ: {current_dir}")
+        self.log_message(f"ディレクトリ書き込み権限: {os.access(current_dir, os.W_OK)}")
+        self.log_message(f"デフォルト出力先: {self.output_file_path.get()}")
+        
+        # 一時ディレクトリ情報もログ出力
+        temp_dir = tempfile.gettempdir()
+        self.log_message(f"一時ディレクトリ: {temp_dir}")
+        self.log_message(f"一時ディレクトリ書き込み権限: {os.access(temp_dir, os.W_OK)}")
         
     def create_widgets(self):
         # メインフレーム
@@ -161,6 +174,71 @@ class WordCloudGUI:
         self.log_text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
         
         parent.rowconfigure(3, weight=1)
+    
+    def get_writable_output_path(self):
+        """書き込み可能なディレクトリでデフォルト出力パスを取得"""
+        try:
+            # まず現在のディレクトリを試す
+            current_dir = os.getcwd()
+            if os.access(current_dir, os.W_OK):
+                return os.path.join(current_dir, "wordcloud_output.png")
+            
+            # 現在のディレクトリが書き込み不可の場合、ユーザーのホームディレクトリを使用
+            home_dir = os.path.expanduser("~")
+            if os.access(home_dir, os.W_OK):
+                return os.path.join(home_dir, "wordcloud_output.png")
+            
+            # それでもダメな場合は一時ディレクトリを使用
+            temp_dir = tempfile.gettempdir()
+            return os.path.join(temp_dir, "wordcloud_output.png")
+            
+        except Exception:
+            # エラーが発生した場合は一時ディレクトリを使用
+            temp_dir = tempfile.gettempdir()
+            return os.path.join(temp_dir, "wordcloud_output.png")
+    
+    def get_writable_debug_path(self, filename):
+        """書き込み可能なディレクトリでデバッグファイルパスを取得"""
+        try:
+            # まず現在のディレクトリを試す
+            current_dir = os.getcwd()
+            if os.access(current_dir, os.W_OK):
+                return os.path.join(current_dir, filename)
+            
+            # 現在のディレクトリが書き込み不可の場合、ユーザーのホームディレクトリを使用
+            home_dir = os.path.expanduser("~")
+            if os.access(home_dir, os.W_OK):
+                return os.path.join(home_dir, filename)
+            
+            # それでもダメな場合は一時ディレクトリを使用
+            temp_dir = tempfile.gettempdir()
+            return os.path.join(temp_dir, filename)
+            
+        except Exception:
+            # エラーが発生した場合は一時ディレクトリを使用
+            temp_dir = tempfile.gettempdir()
+            return os.path.join(temp_dir, filename)
+    
+    def get_writable_directory(self):
+        """書き込み可能なディレクトリを取得"""
+        try:
+            # まず現在のディレクトリを試す
+            current_dir = os.getcwd()
+            if os.access(current_dir, os.W_OK):
+                return current_dir
+            
+            # 現在のディレクトリが書き込み不可の場合、ユーザーのホームディレクトリを使用
+            home_dir = os.path.expanduser("~")
+            if os.access(home_dir, os.W_OK):
+                return home_dir
+            
+            # それでもダメな場合は一時ディレクトリを使用
+            temp_dir = tempfile.gettempdir()
+            return temp_dir
+            
+        except Exception:
+            # エラーが発生した場合は一時ディレクトリを使用
+            return tempfile.gettempdir()
         
     def browse_input_file(self):
         filename = filedialog.askopenfilename(
@@ -171,8 +249,11 @@ class WordCloudGUI:
             self.input_file_path.set(filename)
             
     def browse_output_file(self):
+        # デフォルトで書き込み可能なディレクトリを設定
+        initial_dir = self.get_writable_directory()
         filename = filedialog.asksaveasfilename(
             title="出力画像ファイルを保存",
+            initialdir=initial_dir,
             defaultextension=".png",
             filetypes=[("PNG files", "*.png"), ("JPEG files", "*.jpg"), ("All files", "*.*")]
         )
@@ -223,8 +304,10 @@ class WordCloudGUI:
             text = self.generator.read_text_file(input_file)
             
             self.log_message("形態素解析を実行中...")
-            # デバッグファイルの出力先を設定
-            debug_file = f"{os.path.splitext(input_file)[0]}_debug.txt"
+            # デバッグファイルの出力先を書き込み可能なディレクトリに設定
+            input_basename = os.path.basename(input_file)
+            debug_filename = f"{os.path.splitext(input_basename)[0]}_debug.txt"
+            debug_file = self.get_writable_debug_path(debug_filename)
             words = self.generator.extract_words(text, debug_output=debug_file)
             self.log_message(f"抽出された単語数: {len(words)}")
             self.log_message(f"デバッグ情報を出力: {debug_file}")
@@ -241,7 +324,13 @@ class WordCloudGUI:
                 self.log_message("ワードクラウドを生成中...")
                 
                 # カスタムパラメータでワードクラウドを生成
-                output_file = "preview_temp.png" if preview_mode else self.output_file_path.get()
+                if preview_mode:
+                    # プレビュー用一時ファイルは書き込み可能なディレクトリに作成
+                    temp_dir = tempfile.gettempdir()
+                    output_file = os.path.join(temp_dir, "wordcloud_preview_temp.png")
+                    self.log_message(f"プレビュー一時ファイル: {output_file}")
+                else:
+                    output_file = self.output_file_path.get()
                 success = self.generate_custom_wordcloud(word_freq, output_file)
                 
                 if success:

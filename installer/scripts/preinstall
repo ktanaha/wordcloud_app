@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# WordCloudApp インストール前処理スクリプト
+
+echo "Japanese WordCloud Generator をインストールしています..."
+
+# 既存のアプリケーションがある場合の確認
+if [ -d "/Applications/WordCloudApp.app" ]; then
+    echo "既存のWordCloudAppが見つかりました。アップデートします..."
+    rm -rf "/Applications/WordCloudApp.app"
+fi
+
+# 最小システム要件のチェック
+os_version=$(sw_vers -productVersion)
+min_version="10.15.0"
+
+if [[ "$(printf '%s\n' "$min_version" "$os_version" | sort -V | head -n1)" != "$min_version" ]]; then
+    echo "エラー: このアプリケーションにはmacOS 10.15以上が必要です。"
+    echo "現在のバージョン: $os_version"
+    exit 1
+fi
+
+echo "システム要件を満たしています。インストールを続行します..."
+
+exit 0

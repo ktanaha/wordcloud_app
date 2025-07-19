@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# WordCloudApp インストール後処理スクリプト
+
+# 権限の設定
+chmod -R 755 "/Applications/WordCloudApp.app"
+
+# Finderでアプリケーションが認識されるように更新
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "/Applications/WordCloudApp.app"
+
+# インストール完了メッセージ
+echo "Japanese WordCloud Generator のインストールが完了しました。"
+echo "アプリケーションは /Applications/WordCloudApp.app にインストールされました。"
+
+# 必要に応じてMeCabのチェック
+if ! command -v mecab &> /dev/null; then
+    echo "注意: MeCabがインストールされていません。"
+    echo "アプリケーションを使用する前に、以下のコマンドでMeCabをインストールしてください："
+    echo "brew install mecab mecab-ipadic"
+fi
+
+exit 0

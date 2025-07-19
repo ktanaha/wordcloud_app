@@ -1,0 +1,1 @@
+../../Resources/wordcloud/query_integral_image.pyx

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- アプリケーション基本情報 -->
+    <key>CFBundleName</key>
+    <string>WordCloud Generator</string>
+    <key>CFBundleDisplayName</key>
+    <string>Japanese WordCloud Generator</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.ktanaha.wordcloud-generator</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    
+    <!-- 実行ファイル情報 -->
+    <key>CFBundleExecutable</key>
+    <string>wordcloud_gui</string>
+    <key>CFBundleIconFile</key>
+    <string>icon.icns</string>
+    
+    <!-- ドキュメントタイプ -->
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Text Document</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>txt</string>
+                <string>csv</string>
+            </array>
+            <key>CFBundleTypeDescription</key>
+            <string>日本語テキストファイル</string>
+            <key>CFBundleTypeIconFile</key>
+            <string>icon.icns</string>
+        </dict>
+    </array>
+    
+    <!-- アプリケーション情報 -->
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2024 Takashi Tanahashi. All rights reserved.</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15.0</string>
+    
+    <!-- アプリケーションカテゴリ -->
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.graphics-design</string>
+    
+    <!-- 権限設定 -->
+    <key>NSAppleEventsUsageDescription</key>
+    <string>このアプリケーションは日本語テキストからワードクラウドを生成します。</string>
+    <key>NSDesktopFolderUsageDescription</key>
+    <string>ワードクラウド画像をデスクトップに保存するために使用します。</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>テキストファイルの読み込みと画像の保存に使用します。</string>
+    
+    <!-- Python関連設定 -->
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSMainNibFile</key>
+    <string></string>
+    
+    <!-- URL Schemes -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>WordCloud File</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>wordcloud</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist>

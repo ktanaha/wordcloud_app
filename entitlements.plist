@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- ハードニングランタイムで必要な基本的な権限 -->
+    
+    <!-- ファイルシステムアクセス -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    
+    <!-- ネットワークアクセス（必要に応じて） -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    
+    <!-- 実行可能なメモリ（Pythonランタイムで必要な場合） -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    
+    <!-- 動的ライブラリローディング（Pythonのライブラリで必要） -->
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <true/>
+    
+    <!-- 未署名の実行可能コード（Python インタープリターで必要な場合） -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    
+    <!-- デバッグ権限（開発時のみ - リリース時は削除推奨） -->
+    <key>com.apple.security.cs.debugger</key>
+    <false/>
+    
+    <!-- リソースアクセス -->
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    
+    <!-- アプリケーション間通信（必要に応じて） -->
+    <key>com.apple.security.automation.apple-events</key>
+    <false/>
+</dict>
+</plist>

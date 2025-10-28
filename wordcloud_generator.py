@@ -23,7 +23,23 @@ class JapaneseWordCloudGenerator:
         except Exception as e:
             print(f"MeCabの初期化に失敗しました: {e}")
             sys.exit(1)
-    
+
+        # 除外単語リストの初期化
+        self.exclude_words = []
+
+    def add_exclude_word(self, word):
+        """除外単語を追加"""
+        if word not in self.exclude_words:
+            self.exclude_words.append(word)
+
+    def set_exclude_words(self, words):
+        """除外単語リストを設定"""
+        self.exclude_words = list(words)
+
+    def clear_exclude_words(self):
+        """除外単語リストをクリア"""
+        self.exclude_words = []
+
     def read_text_file(self, file_path):
         """テキストファイルを読み込む"""
         try:
@@ -103,8 +119,12 @@ class JapaneseWordCloudGenerator:
     def create_word_frequency(self, words, min_freq=2):
         """単語の頻度を計算"""
         word_freq = Counter(words)
-        # 最小出現回数でフィルタリング
-        filtered_freq = {word: freq for word, freq in word_freq.items() if freq >= min_freq}
+        # 除外単語と最小出現回数でフィルタリング
+        filtered_freq = {
+            word: freq
+            for word, freq in word_freq.items()
+            if freq >= min_freq and word not in self.exclude_words
+        }
         return filtered_freq
     
     def find_japanese_font(self):

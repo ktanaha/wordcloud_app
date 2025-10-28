@@ -31,6 +31,7 @@ class WordCloudGUI:
         self.max_words = tk.IntVar(value=100)
         self.background_color = tk.StringVar(value="white")
         self.colormap = tk.StringVar(value="viridis")
+        self.exclude_words = tk.StringVar(value="")
         
         # ワードクラウドジェネレーター
         self.generator = None
@@ -132,6 +133,14 @@ class WordCloudGUI:
         color_combo = ttk.Combobox(right_frame, textvariable=self.colormap, width=15)
         color_combo['values'] = ('viridis', 'plasma', 'inferno', 'magma', 'coolwarm', 'rainbow', 'tab10')
         color_combo.grid(row=1, column=1, sticky=tk.W, padx=(5, 0), pady=2)
+
+        ttk.Label(right_frame, text="除外単語:").grid(row=2, column=0, sticky=tk.W, pady=2)
+        exclude_entry = ttk.Entry(right_frame, textvariable=self.exclude_words, width=20)
+        exclude_entry.grid(row=2, column=1, sticky=tk.W, padx=(5, 0), pady=2)
+
+        # 除外単語のヒントラベル
+        hint_label = ttk.Label(right_frame, text="(カンマ区切り)", font=('', 9), foreground='gray')
+        hint_label.grid(row=3, column=1, sticky=tk.W, padx=(5, 0), pady=0)
         
     def create_control_section(self, parent):
         # 制御フレーム
@@ -226,19 +235,27 @@ class WordCloudGUI:
             current_dir = os.getcwd()
             if os.access(current_dir, os.W_OK):
                 return current_dir
-            
+
             # 現在のディレクトリが書き込み不可の場合、ユーザーのホームディレクトリを使用
             home_dir = os.path.expanduser("~")
             if os.access(home_dir, os.W_OK):
                 return home_dir
-            
+
             # それでもダメな場合は一時ディレクトリを使用
             temp_dir = tempfile.gettempdir()
             return temp_dir
-            
+
         except Exception:
             # エラーが発生した場合は一時ディレクトリを使用
             return tempfile.gettempdir()
+
+    def parse_exclude_words(self):
+        """除外単語の文字列をパースしてリストに変換"""
+        exclude_words_str = self.exclude_words.get().strip()
+        if exclude_words_str:
+            # カンマ区切りで分割し、前後の空白を削除
+            return [word.strip() for word in exclude_words_str.split(',') if word.strip()]
+        return []
         
     def browse_input_file(self):
         filename = filedialog.askopenfilename(
@@ -302,7 +319,15 @@ class WordCloudGUI:
                 
             self.log_message("テキストファイルを読み込み中...")
             text = self.generator.read_text_file(input_file)
-            
+
+            # 除外単語を設定
+            exclude_list = self.parse_exclude_words()
+            if exclude_list:
+                self.generator.set_exclude_words(exclude_list)
+                self.log_message(f"除外単語: {exclude_list}")
+            else:
+                self.generator.clear_exclude_words()
+
             self.log_message("形態素解析を実行中...")
             # デバッグファイルの出力先を書き込み可能なディレクトリに設定
             input_basename = os.path.basename(input_file)

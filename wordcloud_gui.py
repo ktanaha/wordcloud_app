@@ -49,7 +49,11 @@ class WordCloudGUI:
         temp_dir = tempfile.gettempdir()
         self.log_message(f"一時ディレクトリ: {temp_dir}")
         self.log_message(f"一時ディレクトリ書き込み権限: {os.access(temp_dir, os.W_OK)}")
-        
+
+        # 起動時にサンプルテキストでプレビューを自動生成
+        self.log_message("サンプルテキストでプレビューを生成中...")
+        self.root.after(100, self.auto_generate_preview)
+
     def create_widgets(self):
         # メインフレーム
         main_frame = ttk.Frame(self.root, padding="10")
@@ -249,6 +253,27 @@ class WordCloudGUI:
             # エラーが発生した場合は一時ディレクトリを使用
             return tempfile.gettempdir()
 
+    def get_sample_text_path(self):
+        """サンプルテキストファイルのパスを取得"""
+        # スクリプトのディレクトリを基準にサンプルテキストのパスを取得
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(script_dir, "sample_text.txt")
+
+    def get_input_file_for_processing(self):
+        """処理に使用する入力ファイルのパスを取得
+
+        入力ファイルが指定されていない、または存在しない場合は
+        サンプルテキストファイルのパスを返す
+        """
+        input_file = self.input_file_path.get().strip()
+
+        # 入力ファイルが指定されており、存在する場合はそれを返す
+        if input_file and os.path.exists(input_file):
+            return input_file
+
+        # それ以外の場合はサンプルテキストを返す
+        return self.get_sample_text_path()
+
     def parse_exclude_words(self):
         """除外単語の文字列をパースしてリストに変換"""
         exclude_words_str = self.exclude_words.get().strip()
@@ -308,16 +333,16 @@ class WordCloudGUI:
     def generate_wordcloud_thread(self, preview_mode=False):
         try:
             self.progress.start()
-            
+
             if not self.init_generator():
                 return
-                
-            input_file = self.input_file_path.get()
-            if not input_file or not os.path.exists(input_file):
-                self.root.after(0, lambda: messagebox.showerror("エラー", "入力ファイルを選択してください"))
-                return
-                
+
+            # 入力ファイルを取得（未指定の場合はサンプルテキストを使用）
+            input_file = self.get_input_file_for_processing()
+
             self.log_message("テキストファイルを読み込み中...")
+            if input_file == self.get_sample_text_path():
+                self.log_message("サンプルテキストを使用します")
             text = self.generator.read_text_file(input_file)
 
             # 除外単語を設定
@@ -492,6 +517,12 @@ class WordCloudGUI:
         self.generate_btn.config(state='disabled')
         self.preview_btn.config(state='disabled')
         threading.Thread(target=self.generate_wordcloud_thread, args=(True,), daemon=True).start()
+
+    def auto_generate_preview(self):
+        """起動時に自動的にサンプルテキストでプレビューを生成"""
+        # 入力ファイルが未設定の場合のみ自動プレビューを実行
+        if not self.input_file_path.get().strip():
+            self.preview_wordcloud()
 
 def main():
     root = tk.Tk()

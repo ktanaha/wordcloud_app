@@ -22,7 +22,7 @@ class TestPreviewFeature(unittest.TestCase):
 
     def test_サンプルテキストファイルのパス取得(self):
         """サンプルテキストファイルのパスを正しく取得できることを確認"""
-        from wordcloud_gui import WordCloudGUI
+        from src.wordcloud_gui import WordCloudGUI
 
         # 実際のルートウィンドウを使用
         app = WordCloudGUI(self.root)
@@ -40,7 +40,7 @@ class TestPreviewFeature(unittest.TestCase):
 
     def test_入力ファイル未指定時にサンプルテキストを使用(self):
         """入力ファイルが指定されていない場合、サンプルテキストを使用することを確認"""
-        from wordcloud_gui import WordCloudGUI
+        from src.wordcloud_gui import WordCloudGUI
 
         app = WordCloudGUI(self.root)
 
@@ -59,7 +59,7 @@ class TestPreviewFeature(unittest.TestCase):
 
     def test_入力ファイル指定時にそのファイルを使用(self):
         """入力ファイルが指定されている場合、そのファイルを使用することを確認"""
-        from wordcloud_gui import WordCloudGUI
+        from src.wordcloud_gui import WordCloudGUI
 
         app = WordCloudGUI(self.root)
 

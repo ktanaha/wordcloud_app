@@ -3,7 +3,7 @@
 
 import unittest
 from unittest.mock import MagicMock, patch
-from wordcloud_generator import JapaneseWordCloudGenerator
+from src.wordcloud_generator import JapaneseWordCloudGenerator
 
 
 class TestExcludeWords(unittest.TestCase):

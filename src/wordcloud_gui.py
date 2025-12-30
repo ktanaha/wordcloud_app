@@ -9,7 +9,7 @@ import sys
 import tempfile
 from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
-from wordcloud_generator import JapaneseWordCloudGenerator
+from src.wordcloud_generator import JapaneseWordCloudGenerator
 from collections import Counter
 
 class WordCloudGUI:
@@ -255,9 +255,11 @@ class WordCloudGUI:
 
     def get_sample_text_path(self):
         """サンプルテキストファイルのパスを取得"""
-        # スクリプトのディレクトリを基準にサンプルテキストのパスを取得
+        # プロジェクトルートディレクトリを基準にサンプルテキストのパスを取得
+        # src/からプロジェクトルートに移動
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(script_dir, "sample_text.txt")
+        project_root = os.path.dirname(script_dir)
+        return os.path.join(project_root, "sample_text.txt")
 
     def get_input_file_for_processing(self):
         """処理に使用する入力ファイルのパスを取得

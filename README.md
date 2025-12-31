@@ -4,9 +4,12 @@ MeCabを使用した日本語テキストからワードクラウドを生成す
 
 ## 機能
 
+- **GUIアプリケーション**: 使いやすいグラフィカルインターフェース
+- **自動プレビュー**: 起動時にサンプルテキストで自動的にプレビューを表示
+- **除外単語機能**: 特定の単語をワードクラウドから除外可能
 - **日本語形態素解析**: MeCabを使用して日本語テキストを解析
 - **品詞フィルタリング**: 名詞、動詞、形容詞のみを抽出
-- **カスタマイズ可能**: 画像サイズ、最小出現回数、出力ファイル名を指定可能
+- **カスタマイズ可能**: 画像サイズ、最小出現回数、カラーマップ、背景色を指定可能
 - **高品質出力**: PNG形式で高解像度のワードクラウド画像を生成
 
 ## 必要な環境
@@ -69,20 +72,32 @@ pip install mecab-python3 wordcloud matplotlib
 
 ## 使用方法
 
-### 基本的な使用方法
+### GUIアプリケーションの起動
+
+```bash
+# 仮想環境をアクティベート
+source venv/bin/activate
+
+# GUIアプリケーションを起動
+python main.py
+```
+
+起動時に自動的にサンプルテキストでプレビューが表示されます。
+
+### コマンドラインでの使用
 
 ```bash
 # 仮想環境をアクティベート
 source venv/bin/activate
 
 # サンプルテキストでワードクラウドを生成
-python wordcloud_generator.py sample_text.txt
+python -m src.wordcloud_generator sample_text.txt
 ```
 
 ### コマンドラインオプション
 
 ```bash
-python wordcloud_generator.py [入力ファイル] [オプション]
+python -m src.wordcloud_generator [入力ファイル] [オプション]
 ```
 
 #### 必須引数
@@ -98,16 +113,16 @@ python wordcloud_generator.py [入力ファイル] [オプション]
 
 ```bash
 # 基本的な使用
-python wordcloud_generator.py my_text.txt
+python -m src.wordcloud_generator my_text.txt
 
 # 出力ファイル名を指定
-python wordcloud_generator.py my_text.txt -o my_wordcloud.png
+python -m src.wordcloud_generator my_text.txt -o my_wordcloud.png
 
 # 最小出現回数と画像サイズを指定
-python wordcloud_generator.py my_text.txt --min-freq 3 --width 1200 --height 800
+python -m src.wordcloud_generator my_text.txt --min-freq 3 --width 1200 --height 800
 
 # すべてのオプションを指定
-python wordcloud_generator.py my_text.txt -o output.png --min-freq 2 --width 1000 --height 600
+python -m src.wordcloud_generator my_text.txt -o output.png --min-freq 2 --width 1000 --height 600
 ```
 
 ## ファイル構成
@@ -117,8 +132,18 @@ wordcloud_app/
 ├── README.md                    # このファイル
 ├── requirements.txt             # Python依存関係
 ├── .gitignore                  # Git除外設定
-├── wordcloud_generator.py      # メインスクリプト
+├── main.py                     # アプリケーションエントリポイント
 ├── sample_text.txt             # サンプルテキスト
+├── src/                        # 実装ファイル
+│   ├── __init__.py
+│   ├── wordcloud_generator.py  # ワードクラウド生成ロジック
+│   └── wordcloud_gui.py        # GUIアプリケーション
+├── tests/                      # テストファイル
+│   ├── __init__.py
+│   ├── test_wordcloud_generator.py
+│   ├── test_preview_feature.py
+│   ├── test_exclude_integration.py
+│   └── test_exclude_real.py
 └── venv/                       # Python仮想環境（Git管理外）
 ```
 
